@@ -59,7 +59,7 @@ public class EnderecoServiceImpl implements EnderecoService {
 	private EnderecoEntity foundEndereco(String enderecoId) {
 		Optional<EnderecoEntity> endereco = enderecoRepository.findByEnderecoId(enderecoId);
 		if(!endereco.isPresent())
-			throw new EnderecoNotFoundException();
+			throw new EnderecoNotFoundException("EnderecoNotFoundException");
 		return endereco.get();
 	}
 }

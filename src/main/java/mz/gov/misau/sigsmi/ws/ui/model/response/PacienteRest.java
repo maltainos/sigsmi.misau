@@ -4,11 +4,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@EqualsAndHashCode
+@ToString
 public class PacienteRest {
 	
 	private String pacienteId;

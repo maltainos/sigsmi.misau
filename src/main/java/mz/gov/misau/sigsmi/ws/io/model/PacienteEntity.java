@@ -20,12 +20,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+
 @EqualsAndHashCode
 @Getter
 @Setter
 @Entity
 @Table(name = "pacientes")
-public class PacienteEntity {
+public class PacienteEntity{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

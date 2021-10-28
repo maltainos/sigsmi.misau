@@ -89,14 +89,14 @@ public class PacienteServiceImpl implements PacienteService{
 	private PacienteEntity findByPacienteId(String pacienteId) {
 		Optional<PacienteEntity> foundPaciente = pacienteRepository.findByPacienteId(pacienteId);
 		if(!foundPaciente.isPresent())
-			throw new PacienteNotFoundException();
+			throw new PacienteNotFoundException("PacienteNotFoundException");
 		return foundPaciente.get();
 	}
 	
 	private PacienteEntity operationPacienteId(String pacienteId) {
 		Optional<PacienteEntity> foundPaciente = pacienteRepository.findByPacienteId(pacienteId);
 		if(!foundPaciente.isPresent())
-			throw new DenidOperationAndInvalidResourceException();
+			throw new DenidOperationAndInvalidResourceException("DenidOperationAndInvalidResourceException");
 		return foundPaciente.get();
 	}
 

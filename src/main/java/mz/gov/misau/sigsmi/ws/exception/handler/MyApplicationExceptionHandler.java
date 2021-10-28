@@ -48,7 +48,7 @@ public class MyApplicationExceptionHandler extends ResponseEntityExceptionHandle
 		
 		MensagemErro error = new MensagemErro(HttpStatus.BAD_REQUEST.value(), 
 				messageSource.getMessage("fieldFormatNotValid.format", null, 
-						LocaleContextHolder.getLocale()), LocalDateTime.now());
+						LocaleContextHolder.getLocale()), LocalDateTime.now(),ex.getMessage());
 		
 		return handleExceptionInternal(ex, error, headers, HttpStatus.BAD_REQUEST, request);
 	}
@@ -57,7 +57,7 @@ public class MyApplicationExceptionHandler extends ResponseEntityExceptionHandle
 	public ResponseEntity<Object> handleDenidOperationAndInvalidResourceException(DenidOperationAndInvalidResourceException ex){
 		MensagemErro error = new MensagemErro(HttpStatus.BAD_REQUEST.value(), 
 				messageSource.getMessage("operacao.operacao-negada",null, 
-						LocaleContextHolder.getLocale()),LocalDateTime.now());
+						LocaleContextHolder.getLocale()),LocalDateTime.now(),ex.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
 	}
 	

@@ -36,7 +36,7 @@ import mz.gov.misau.sigsmi.ws.ui.model.response.PacienteRest;
 
 @RestController
 @RequestMapping(path = "/pacientes")
-public class PacienteController{
+public class PacienteRestController{
 	
 	@Autowired
 	private MessageSource messageSource;
@@ -49,6 +49,7 @@ public class PacienteController{
 		List<PacienteDTO> pacientes = pacienteService.search();
 		ModelMapper mapper = new ModelMapper();
 		Type pacientesRest = new TypeToken<List<PacienteRest>>() {}.getType();
+		//Resource<PacienteRest> resource = new  Resource<PacienteRest>(pacienteRest);
 		return mapper.map(pacientes, pacientesRest);
 	}
 	
@@ -57,7 +58,10 @@ public class PacienteController{
 		ModelMapper mapper = new ModelMapper();
 		PacienteDTO pacienteDTO = mapper.map(pacienteRequest, PacienteDTO.class);
 		pacienteDTO = pacienteService.create(pacienteDTO);
-		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(pacienteDTO, PacienteRest.class));
+		
+		PacienteRest returnValue = mapper.map(pacienteDTO, PacienteRest.class);
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
 	}
 	
 	@GetMapping(path = "/{pacienteId}/enderecos")
@@ -97,7 +101,7 @@ public class PacienteController{
 	public ResponseEntity<Object> handlePacienteNotFoundException(PacienteNotFoundException ex){
 		MensagemErro error = new MensagemErro(HttpStatus.NOT_FOUND.value(), 
 				messageSource.getMessage("recurso.recurso-nao-encontrado",null, 
-						LocaleContextHolder.getLocale()),LocalDateTime.now());
+						LocaleContextHolder.getLocale()),LocalDateTime.now(),ex.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
 	}
 	
@@ -105,7 +109,7 @@ public class PacienteController{
 	public ResponseEntity<Object> handleEnderecoNotFoundException(EnderecoNotFoundException ex){
 		MensagemErro error = new MensagemErro(HttpStatus.NOT_FOUND.value(),
 				messageSource.getMessage("recurso.recurso-nao-encontrado", null, 
-						LocaleContextHolder.getLocale()), LocalDateTime.now());
+						LocaleContextHolder.getLocale()), LocalDateTime.now(),ex.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
 	}
 	

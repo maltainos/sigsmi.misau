@@ -14,11 +14,22 @@ public class MyUtils {
 	public String generateUrlResource(int length) {
 		return generatedResourceId(length);
 	}
+	
+	public String generateLogin(int length) {
+		return generatedUserName(length);
+	}
 
 	private String generatedResourceId(int length) {
 		StringBuilder builder = new StringBuilder();
 		for(int i = 0; i < length; i++)
 			builder.append(ALPHABET.charAt(RANDOM.nextInt(ALPHABET.length())));
+		return builder.toString();
+	}
+	
+	private String generatedUserName(int length) {
+		StringBuilder builder = new StringBuilder();
+		for(int i = 0; i < length; i++)
+			builder.append(ALPHABET.charAt(RANDOM.nextInt(10)));
 		return builder.toString();
 	}
 

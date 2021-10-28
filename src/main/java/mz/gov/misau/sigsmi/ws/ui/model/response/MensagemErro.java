@@ -18,4 +18,14 @@ public class MensagemErro {
 	private int status;
 	private String mensagem;
 	private LocalDateTime timestamps;
+	private String exception;
+	
+	public MensagemErro(int status, String mensagem, LocalDateTime timestamps) {
+		super();
+		this.status = status;
+		this.mensagem = mensagem;
+		this.timestamps = timestamps;
+	}
+	
+	
 }
