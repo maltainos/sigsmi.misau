@@ -10,12 +10,14 @@ import javax.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
-@EqualsAndHashCode
 @Entity
 @Table(name = "roles")
+@ToString
+@EqualsAndHashCode
 public class RoleEntity {
 
 	@Id

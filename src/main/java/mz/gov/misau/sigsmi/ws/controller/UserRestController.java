@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import mz.gov.misau.sigsmi.ws.exception.resource.UserNameOrEmailExistException;
@@ -53,8 +54,9 @@ public class UserRestController {
 	private final ModelMapper MAPPER = new ModelMapper();
 
 	@GetMapping
-	public List<UserRest> searchUsers(){
-		List<UserDTO> usersDTO =  userService.findUsers();
+	public List<UserRest> searchUsers(@RequestParam(value = "page",  defaultValue = "0")int page, 
+			@RequestParam(value = "limit", defaultValue = "25")int limit){
+		List<UserDTO> usersDTO =  userService.findUsers(page, limit);
 		Type usersDTOType = new TypeToken<List<UserRest>>() {}.getType();
 		return MAPPER.map(usersDTO, usersDTOType);
 	}
@@ -65,15 +67,12 @@ public class UserRestController {
 		return MAPPER.map(usersDTO, UserRest.class);
 	}
 	
-	@GetMapping(path = "/login/{login}")
-	public UserRest findUserByLogin(@PathVariable String login){
-		UserDTO usersDTO =  userService.findUserByUserId(login);
-		return MAPPER.map(usersDTO, UserRest.class);
-	}
-	
-	@GetMapping(path = "/user-id/{userid}")
+	@GetMapping(path = "/{userId}")
 	public UserRest findUserByUserId(@PathVariable String userId){
 		UserDTO usersDTO =  userService.findUserByUserId(userId);
+		
+		//org.springframework.hateoas.
+		//Resource<UserRest> resource = new Resource<UserRest>(usersDTO);
 		return MAPPER.map(usersDTO, UserRest.class);
 	}
 	

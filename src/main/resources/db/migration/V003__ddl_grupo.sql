@@ -1,6 +1,8 @@
 CREATE TABLE levels (
 	id BIGINT NOT NULL AUTO_INCREMENT, 
-	group_id VARCHAR(30) NOT NULL, 
-	group_name VARCHAR(30) NOT NULL, 
+	level_id VARCHAR(30) NOT NULL, 
+	level_name VARCHAR(30) NOT NULL, 
+	created_on DATETIME NOT NULL, 
+	updated_on DATETIME,    
 	PRIMARY KEY (id)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

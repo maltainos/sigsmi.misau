@@ -1,0 +1,10 @@
+CREATE TABLE vacinas(
+	id BIGINT NOT NULL AUTO_INCREMENT,
+	vacina_id VARCHAR(30) NOT NULL UNIQUE,
+	dose_vacina VARCHAR(225) NOT NULL,
+	data_vacina DATETIME NOT NULL,
+	local_vacina VARCHAR(255) NOT NULL,
+	gravidez_id BIGINT NOT NULL,
+	PRIMARY KEY(id),
+	FOREIGN KEY(gravidez_id) REFERENCES gravidezes(id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

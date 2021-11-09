@@ -1,6 +1,7 @@
 package mz.gov.misau.sigsmi.ws.shared.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -27,6 +28,7 @@ public class UserDTO {
 	private String encryptedPassword;
 	private String emailVerificationToken;
 	private boolean emailVerificationStatus;
+	private List<UserLevelDTO> groups;
 	private LocalDateTime createdOn;
 	private LocalDateTime updatedOn;
 }

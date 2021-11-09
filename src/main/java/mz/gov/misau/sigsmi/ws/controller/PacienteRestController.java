@@ -14,6 +14,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,15 +46,16 @@ public class PacienteRestController{
 	public PacienteServiceImpl pacienteService;
 	
 	@GetMapping
+	@PreAuthorize("hasAuthority('ROLE_SELECT_PATIENTSS')")
 	public List<PacienteRest> search(){
 		List<PacienteDTO> pacientes = pacienteService.search();
 		ModelMapper mapper = new ModelMapper();
 		Type pacientesRest = new TypeToken<List<PacienteRest>>() {}.getType();
-		//Resource<PacienteRest> resource = new  Resource<PacienteRest>(pacienteRest);
 		return mapper.map(pacientes, pacientesRest);
 	}
 	
 	@PostMapping
+	@PreAuthorize("hasAuthority('ROLE_CREATE_PATIENT')")
 	public ResponseEntity<PacienteRest> create(@Valid @RequestBody PacienteRequestDetailsModel pacienteRequest, HttpServletResponse response) {
 		ModelMapper mapper = new ModelMapper();
 		PacienteDTO pacienteDTO = mapper.map(pacienteRequest, PacienteDTO.class);
@@ -65,6 +67,7 @@ public class PacienteRestController{
 	}
 	
 	@GetMapping(path = "/{pacienteId}/enderecos")
+	@PreAuthorize("hasAuthority('ROLE_SELECT_PATIENT')")
 	public List<EnderecoRest> searchAddresses(@PathVariable String pacienteId) {
 		List<EnderecoDTO> enderecos = pacienteService.searchAddresses(pacienteId);
 		ModelMapper mapper = new ModelMapper();
@@ -73,6 +76,7 @@ public class PacienteRestController{
 	}
 	
 	@PostMapping(path = "/{pacienteId}/enderecos")
+	@PreAuthorize("hasAuthority('ROLE_CREATE_PATIENT')")
 	public ResponseEntity<EnderecoRest> create(@Valid @RequestBody EnderecoRequestDetailsModel enderecoRequest, @PathVariable String pacienteId, HttpServletResponse response) {
 		ModelMapper mapper = new ModelMapper();
 		EnderecoDTO enderecoDTO = mapper.map(enderecoRequest, EnderecoDTO.class);
@@ -81,6 +85,7 @@ public class PacienteRestController{
 	}
 	
 	@PutMapping(path = "/{pacienteId}")
+	@PreAuthorize("hasAuthority('ROLE_UPDATE_PATIENT')")
 	public ResponseEntity<PacienteRest> update(@Valid @RequestBody PacienteRequestDetailsModel pacienteRequest, @PathVariable String pacienteId){
 		ModelMapper mapper = new ModelMapper();
 		PacienteDTO pacienteDTO = mapper.map(pacienteRequest, PacienteDTO.class);
@@ -89,6 +94,7 @@ public class PacienteRestController{
 	}
 	
 	@PutMapping(path = "/{pacienteId}/enderecos/{enderecoId}")
+	@PreAuthorize("hasAuthority('ROLE_UPDATE_PATIENT')")
 	public ResponseEntity<EnderecoRest> update(@Valid @RequestBody EnderecoRequestDetailsModel enderecoRequest,
 			@PathVariable String pacienteId, @PathVariable String enderecoId){
 		ModelMapper mapper = new ModelMapper();

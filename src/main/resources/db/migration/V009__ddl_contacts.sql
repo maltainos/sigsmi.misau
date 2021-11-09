@@ -5,4 +5,4 @@ create table contactos (
 	paciente_id BIGINT(20) NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY(paciente_id) REFERENCES pacientes(id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

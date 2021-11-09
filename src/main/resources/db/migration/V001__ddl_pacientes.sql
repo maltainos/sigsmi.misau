@@ -19,7 +19,7 @@ CREATE TABLE pacientes (
 	criado_em DATETIME NOT NULL,
 	atualizado_em DATETIME,
 	PRIMARY KEY (id)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 	
 	
 	
