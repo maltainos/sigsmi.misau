@@ -22,9 +22,9 @@ import org.springframework.stereotype.Service;
 
 import mz.gov.misau.sigsmi.ws.exception.resource.UserNameOrEmailExistException;
 import mz.gov.misau.sigsmi.ws.exception.resource.UserNotFoundException;
-import mz.gov.misau.sigsmi.ws.io.model.RoleEntity;
+import mz.gov.misau.sigsmi.ws.io.model.PasswordResetTokenEntity;
 import mz.gov.misau.sigsmi.ws.io.model.UserEntity;
-import mz.gov.misau.sigsmi.ws.io.model.UserLevelEntity;
+import mz.gov.misau.sigsmi.ws.io.repository.PasswordResetTokenRepository;
 import mz.gov.misau.sigsmi.ws.io.repository.UserRepository;
 import mz.gov.misau.sigsmi.ws.service.UserService;
 import mz.gov.misau.sigsmi.ws.shared.MyUtils;
@@ -42,6 +42,9 @@ public class UserServiceImpl implements UserService{
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
+	@Autowired
+	private PasswordResetTokenRepository passwordResetTokenRepository;
+	
 	private ModelMapper MAPPER = new ModelMapper();
 	
 	@Override
@@ -53,6 +56,7 @@ public class UserServiceImpl implements UserService{
 		userDTO.setUserId(myUtils.generateUrlResource(30));
 		userDTO.setLogin(myUtils.generateLogin(8));
 		userDTO.setCreatedOn(LocalDateTime.now());
+		userDTO.setEmailVerificationToken(MyUtils.generateEmailVerificationToken(userDTO.getUserId()));
 		UserEntity userForSave = MAPPER.map(userDTO, UserEntity.class);
 		userForSave.setEncryptedPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
 		
@@ -88,7 +92,6 @@ public class UserServiceImpl implements UserService{
 		Optional<UserEntity> findUser = userRepository.findByEmail(email);
 		if(!findUser.isPresent())
 			throw new UserNotFoundException("UserNotFoundException");
-		//System.out.println(findUser);
 		return MAPPER.map(findUser.get(), UserDTO.class);
 	}
 
@@ -117,15 +120,42 @@ public class UserServiceImpl implements UserService{
 		if(!findValue.isPresent())
 			throw new UserNameOrEmailExistException("UserNameOrEmailExistException");
 		UserEntity user = findValue.get();
-		
-		ArrayList<RoleEntity> permissions = new ArrayList<>();
-		for(UserLevelEntity level : user.getGroups()) {
-			permissions.addAll(level.getRoles());
-		}
-		
 		Collection<? extends GrantedAuthority> authorities = (Collection<? extends GrantedAuthority>) new ArrayList<>();
 		
-		return new User(user.getEmail(), user.getEncryptedPassword(),authorities);
+		return new User(user.getEmail(), user.getEncryptedPassword(), user.getEmailVerificationStatus(), true, true, true, authorities);
+	}
+
+	public boolean virifyEmailToken(String token) {
+		Optional<UserEntity> user = userRepository.findUserByEmailVerificationToken(token);
+		if(user.isPresent()) {
+			boolean hasTokenExpired = MyUtils.hasTokenExpired(token);
+			
+			if(!hasTokenExpired) {
+				UserEntity userVerificationEmail = user.get();
+				userVerificationEmail.setEmailVerificationStatus(true);
+				userVerificationEmail.setEmailVerificationToken(null);
+				userRepository.save(userVerificationEmail);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean requestPasswordReset(String email) {
+		boolean returnValue = false;
+		Optional<UserEntity> user = userRepository.findByEmail(email);
+		
+		if(!user.isPresent()) {
+			return returnValue;
+		}
+		
+		String token = new MyUtils().generatePasswordResetToken(user.get().getUserId());
+		PasswordResetTokenEntity passwordResetTokenEntity = new PasswordResetTokenEntity();
+		passwordResetTokenEntity.setToken(token);
+		passwordResetTokenEntity.setUserDetails(user.get());
+		passwordResetTokenRepository.save(passwordResetTokenRepository);
+		
+		return !returnValue;
 	}
 
 }

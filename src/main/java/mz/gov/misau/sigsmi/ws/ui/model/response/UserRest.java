@@ -3,8 +3,9 @@ package mz.gov.misau.sigsmi.ws.ui.model.response;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,9 +15,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
 @ToString
-public class UserRest {
+public class UserRest extends RepresentationModel<UserRest>{
 	
 	private String userId;
 	private String firstName;

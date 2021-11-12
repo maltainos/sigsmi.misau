@@ -69,6 +69,9 @@ public class UserEntity {
 	@Column(name ="updated_on")
 	private LocalDateTime updatedOn;
 	
+	public boolean getEmailVerificationStatus() {
+		return emailVerificationStatus;
+	}
 
 }
 

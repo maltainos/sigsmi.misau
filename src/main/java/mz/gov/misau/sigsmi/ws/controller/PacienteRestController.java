@@ -12,6 +12,7 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -54,6 +55,16 @@ public class PacienteRestController{
 		return mapper.map(pacientes, pacientesRest);
 	}
 	
+
+	@GetMapping(path = "/{pacienteId}")
+	@PreAuthorize("hasAuthority('ROLE_UPDATE_PATIENT')")
+	public ResponseEntity<PacienteRest> findById(@PathVariable String pacienteId){
+//		ModelMapper mapper = new ModelMapper();
+//		PacienteDTO pacienteDTO = mapper.map(pacienteRequest, PacienteDTO.class);
+//		pacienteDTO = pacienteService.update(pacienteDTO, pacienteId);
+		return ResponseEntity.ok(null);
+	}
+	
 	@PostMapping
 	@PreAuthorize("hasAuthority('ROLE_CREATE_PATIENT')")
 	public ResponseEntity<PacienteRest> create(@Valid @RequestBody PacienteRequestDetailsModel pacienteRequest, HttpServletResponse response) {
@@ -62,9 +73,12 @@ public class PacienteRestController{
 		pacienteDTO = pacienteService.create(pacienteDTO);
 		
 		PacienteRest returnValue = mapper.map(pacienteDTO, PacienteRest.class);
+		returnValue.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
+				PacienteRestController.class).findById(returnValue.getPacienteId())).withSelfRel());
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
 	}
+	
 	
 	@GetMapping(path = "/{pacienteId}/enderecos")
 	@PreAuthorize("hasAuthority('ROLE_SELECT_PATIENT')")

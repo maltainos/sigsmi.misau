@@ -4,16 +4,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import lombok.EqualsAndHashCode;
+import org.springframework.hateoas.RepresentationModel;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @Setter
-@EqualsAndHashCode
 @ToString
-public class PacienteRest {
+public class PacienteRest extends RepresentationModel<PacienteRest>{
 	
 	private String pacienteId;
 	private String primeiroNome;

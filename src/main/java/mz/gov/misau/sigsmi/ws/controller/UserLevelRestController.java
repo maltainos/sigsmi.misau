@@ -8,7 +8,10 @@ import javax.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +23,7 @@ import mz.gov.misau.sigsmi.ws.ui.model.request.UserLevelRequestDetailsModel;
 import mz.gov.misau.sigsmi.ws.ui.model.response.UserLevelRest;
 
 @RestController
-@RequestMapping(path = "groups")
+@RequestMapping(path = "/groups")
 public class UserLevelRestController {
 	
 	@Autowired
@@ -36,11 +39,27 @@ public class UserLevelRestController {
 		return returnValue;
 	}
 	
+	@GetMapping(path = "/{levelId}")
+	public ResponseEntity<UserLevelRest> findByLevelId(@PathVariable String levelId){
+		
+		UserLevelDTO userLevelDTO = userLevelService.findByLevelId(levelId);
+		UserLevelRest returnValue = MAPPER.map(userLevelDTO, UserLevelRest.class);
+		
+		returnValue.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
+				.methodOn(UserLevelRestController.class).findByLevelId(levelId)).withSelfRel());
+		return ResponseEntity.ok(returnValue);
+	}
+	
 	@PostMapping
 	public UserLevelRest create(@Valid @RequestBody UserLevelRequestDetailsModel userLevelDetails) {
 		UserLevelDTO userLevelDTO = MAPPER.map(userLevelDetails, UserLevelDTO.class);
 		userLevelDTO = userLevelService.create(userLevelDTO);
-		return MAPPER.map(userLevelDTO, UserLevelRest.class);
+		
+		UserLevelRest returnValue = MAPPER.map(userLevelDTO, UserLevelRest.class);
+		returnValue.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
+				UserLevelRestController.class).findByLevelId(returnValue.getLevelId())).withSelfRel());
+		
+		return returnValue;
 	}
 
 }

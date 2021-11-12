@@ -3,12 +3,14 @@ package mz.gov.misau.sigsmi.ws.service.impl;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import mz.gov.misau.sigsmi.ws.exception.resource.UserGroupNotFoundException;
 import mz.gov.misau.sigsmi.ws.io.model.UserLevelEntity;
 import mz.gov.misau.sigsmi.ws.io.repository.UserLevelRepository;
 import mz.gov.misau.sigsmi.ws.service.UserLevelService;
@@ -55,4 +57,33 @@ public class UserLevelServiceImpl implements UserLevelService{
 		
 	}
 
+	public UserLevelDTO findByLevelId(String levelId) {
+		Optional<UserLevelEntity> findLevel = userLevelRepository.findByLevelId(levelId);
+		
+		if(!findLevel.isPresent()) 
+			throw new UserGroupNotFoundException("mz.gov.misau.sigsmi.ws.exception.resource.UserGroupNotFoundException");
+		
+		return MAPPER.map(findLevel.get(), UserLevelDTO.class);
+	}
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

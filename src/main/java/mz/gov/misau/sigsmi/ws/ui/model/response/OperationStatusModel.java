@@ -9,7 +9,7 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode
 @ToString
-public class RequestOperationDetailsModel {
+public class OperationStatusModel {
 	
 	private RequestOperationName operationName;
 	private RequestOperationStatus operationStatus;

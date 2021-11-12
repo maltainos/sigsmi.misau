@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,11 +32,14 @@ import mz.gov.misau.sigsmi.ws.exception.resource.UserNotFoundException;
 import mz.gov.misau.sigsmi.ws.service.impl.UserServiceImpl;
 import mz.gov.misau.sigsmi.ws.shared.dto.UserDTO;
 import mz.gov.misau.sigsmi.ws.ui.event.CreateResourceEvent;
+import mz.gov.misau.sigsmi.ws.ui.model.request.PasswordResetRequestModel;
 import mz.gov.misau.sigsmi.ws.ui.model.request.UserRequestDetailsModel;
 import mz.gov.misau.sigsmi.ws.ui.model.response.MensagemErro;
-import mz.gov.misau.sigsmi.ws.ui.model.response.RequestOperationDetailsModel;
+import mz.gov.misau.sigsmi.ws.ui.model.response.OperationStatusModel;
 import mz.gov.misau.sigsmi.ws.ui.model.response.RequestOperationName;
 import mz.gov.misau.sigsmi.ws.ui.model.response.RequestOperationStatus;
+import mz.gov.misau.sigsmi.ws.ui.model.response.RoleRest;
+import mz.gov.misau.sigsmi.ws.ui.model.response.UserLevelRest;
 import mz.gov.misau.sigsmi.ws.ui.model.response.UserRest;
 
 @RestController
@@ -63,17 +67,47 @@ public class UserRestController {
 	
 	@GetMapping(path = "/email/{email}")
 	public UserRest findUserByEmail(@PathVariable String email){
-		UserDTO usersDTO =  userService.findUserByUserId(email);
-		return MAPPER.map(usersDTO, UserRest.class);
+		UserDTO usersDTO =  userService.findUserByEmail(email);
+		UserRest returnValue = MAPPER.map(usersDTO, UserRest.class);
+		
+		returnValue.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
+				.methodOn(UserRestController.class).findUserByUserId(
+						returnValue.getUserId())).withSelfRel());
+		
+		for(UserLevelRest levelRest : returnValue.getGroups()) {
+			levelRest.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
+					UserLevelRestController.class).findByLevelId(
+							levelRest.getLevelId())).withSelfRel());
+			for(RoleRest roleRest : levelRest.getRoles()) {
+				roleRest.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
+						RoleRestController.class).findByRoleId(roleRest.getRoleId())).withSelfRel());
+			}
+		}
+		
+		return returnValue;
 	}
 	
 	@GetMapping(path = "/{userId}")
 	public UserRest findUserByUserId(@PathVariable String userId){
 		UserDTO usersDTO =  userService.findUserByUserId(userId);
 		
-		//org.springframework.hateoas.
-		//Resource<UserRest> resource = new Resource<UserRest>(usersDTO);
-		return MAPPER.map(usersDTO, UserRest.class);
+		UserRest returnValue = MAPPER.map(usersDTO, UserRest.class);
+		
+		returnValue.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
+				UserRestController.class).findUserByUserId(returnValue.getUserId())).withSelfRel());
+		
+		for(UserLevelRest levelRest : returnValue.getGroups()) {
+			levelRest.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
+					UserLevelRestController.class).findByLevelId(
+							levelRest.getLevelId())).withSelfRel());
+			
+			for(RoleRest roleRest : levelRest.getRoles()) {
+				roleRest.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
+						RoleRestController.class).findByRoleId(roleRest.getRoleId())).withSelfRel());
+			}
+		}
+		
+		return returnValue;
 	}
 	
 	@PostMapping
@@ -82,7 +116,12 @@ public class UserRestController {
 		UserDTO userDTO = MAPPER.map(userDetails, UserDTO.class);
 		userDTO = userService.createUser(userDTO);
 		publisher.publishEvent(new CreateResourceEvent(this, response, userDTO.getUserId()));
-		return ResponseEntity.status(HttpStatus.CREATED).body(MAPPER.map(userDTO, UserRest.class));
+		
+		UserRest returnValue = MAPPER.map(userDTO, UserRest.class);
+		returnValue.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
+				UserRestController.class).findUserByUserId(returnValue.getUserId())).withSelfRel());
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
 	}
 	
 	@PutMapping(path = "/{userId}")
@@ -90,18 +129,65 @@ public class UserRestController {
 			@PathVariable String userId){
 		UserDTO userDTO = MAPPER.map(userDetails, UserDTO.class);
 		userDTO = userService.updateUser(userDTO, userId);
-		return ResponseEntity.ok(MAPPER.map(userDTO, UserRest.class));
+		UserRest returnValue = MAPPER.map(userDTO, UserRest.class);
+		
+		returnValue.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
+				UserRestController.class).findUserByUserId(returnValue.getUserId())).withSelfRel());
+		
+//		for(UserLevelRest levelRest : returnValue.getGroups()) {
+//			levelRest.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
+//					UserLevelRestController.class).findByLevelId(
+//							levelRest.getLevelId())).withSelfRel());
+//			
+//			for(RoleRest roleRest : levelRest.getRoles()) {
+//				roleRest.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
+//						RoleRestController.class).findByRoleId(roleRest.getRoleId())).withSelfRel());
+//			}
+//		}
+		
+		return ResponseEntity.ok(returnValue);
 	}
 	
 	@DeleteMapping(path = "/{userId}")
-	public ResponseEntity<RequestOperationDetailsModel> deleteUser(@PathVariable String userId){
+	public ResponseEntity<Void> deleteUser(@PathVariable String userId){
 		userService.deleteUser(userId);
-		RequestOperationDetailsModel operationName = new RequestOperationDetailsModel();
-		operationName.setOperationName(RequestOperationName.DELETE);
-		operationName.setOperationStatus(
-				new RequestOperationStatus(HttpStatus.NO_CONTENT.value(), 
-						HttpStatus.NO_CONTENT.toString()));
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationName);
+		OperationStatusModel returnValue = new OperationStatusModel();
+		returnValue.setOperationName(RequestOperationName.DELETE);
+		returnValue.setOperationStatus(RequestOperationStatus.SUCCESS);
+		
+//		UserRest returnValue = new UserRest();
+//		returnValue.add(WebMvcLinkBuilder.linkTo(
+//				WebMvcLinkBuilder.methodOn(UserRestController.class)
+//				.deleteUser(userId)).withSelfRel());
+		
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+	
+	@GetMapping(path = "/email-verification")
+	public ResponseEntity<OperationStatusModel> verifyEmailToken(@RequestParam(value = "token") String token){
+		OperationStatusModel returnValue = new OperationStatusModel();
+		returnValue.setOperationName(RequestOperationName.EMAIL_VERIFICATION);
+		returnValue.setOperationStatus(RequestOperationStatus.ERROR);
+		
+		if(userService.virifyEmailToken(token)) 
+			returnValue.setOperationStatus(RequestOperationStatus.SUCCESS);
+		return ResponseEntity.ok(returnValue);
+	}
+	
+	@PostMapping(path = "/password-reset-request")
+	public ResponseEntity<OperationStatusModel> requestReset(@RequestBody 
+			PasswordResetRequestModel passwordResetModel) {
+		OperationStatusModel returnValue = new OperationStatusModel();
+		
+		boolean operationResult = userService.requestPasswordReset(
+				passwordResetModel.getEmail());
+		
+		returnValue.setOperationName(RequestOperationName.REQUEST_PASSWORD_RESET);
+		
+		if(operationResult) returnValue.setOperationStatus(RequestOperationStatus.SUCCESS);
+		else returnValue.setOperationStatus(RequestOperationStatus.ERROR);
+		
+		return ResponseEntity.ok(returnValue);
 	}
 	
 	@ExceptionHandler({UserNameOrEmailExistException.class})

@@ -2,22 +2,17 @@ package mz.gov.misau.sigsmi.ws.ui.model.response;
 
 import java.util.List;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import org.springframework.hateoas.RepresentationModel;
+
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
-public class UserLevelRest {
+public class UserLevelRest extends RepresentationModel<UserLevelRest>{
 	
 	private String levelId;
 	private String levelName;
