@@ -1,18 +1,19 @@
-package mz.gov.misau.sigsmi.ws.io.model;
+package mz.gov.misau.sigsmi.ws.io.model.entity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Entity
+@Table(name = "password_reset_token")
 public class PasswordResetTokenEntity {
 	
 	@Id
@@ -21,9 +22,5 @@ public class PasswordResetTokenEntity {
 	
 	@Column(nullable = false, unique = true)
 	private String token;
-	
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "user_id")
-	private UserEntity userDetails;
 
 }

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,10 +23,11 @@ import org.springframework.stereotype.Service;
 
 import mz.gov.misau.sigsmi.ws.exception.resource.UserNameOrEmailExistException;
 import mz.gov.misau.sigsmi.ws.exception.resource.UserNotFoundException;
-import mz.gov.misau.sigsmi.ws.io.model.PasswordResetTokenEntity;
-import mz.gov.misau.sigsmi.ws.io.model.UserEntity;
+import mz.gov.misau.sigsmi.ws.io.model.entity.PasswordResetTokenEntity;
+import mz.gov.misau.sigsmi.ws.io.model.entity.UserEntity;
 import mz.gov.misau.sigsmi.ws.io.repository.PasswordResetTokenRepository;
 import mz.gov.misau.sigsmi.ws.io.repository.UserRepository;
+import mz.gov.misau.sigsmi.ws.notification.AmazonSES;
 import mz.gov.misau.sigsmi.ws.service.UserService;
 import mz.gov.misau.sigsmi.ws.shared.MyUtils;
 import mz.gov.misau.sigsmi.ws.shared.dto.UserDTO;
@@ -61,7 +63,10 @@ public class UserServiceImpl implements UserService{
 		userForSave.setEncryptedPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
 		
 		UserEntity userSaved = userRepository.save(userForSave);
-		return MAPPER.map(userSaved, UserDTO.class);
+		
+		UserDTO returnValue = MAPPER.map(userSaved, UserDTO.class);
+		new AmazonSES().verifyEmail(returnValue);
+		return returnValue;
 	}
 
 	public List<UserDTO> findUsers(int page, int limit) {
@@ -112,7 +117,6 @@ public class UserServiceImpl implements UserService{
 		userRepository.delete(deleteUser);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Optional<UserEntity> findValue = userRepository.findByEmail(username);
@@ -120,7 +124,9 @@ public class UserServiceImpl implements UserService{
 		if(!findValue.isPresent())
 			throw new UserNameOrEmailExistException("UserNameOrEmailExistException");
 		UserEntity user = findValue.get();
-		Collection<? extends GrantedAuthority> authorities = (Collection<? extends GrantedAuthority>) new ArrayList<>();
+		Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+		SimpleGrantedAuthority authority = new SimpleGrantedAuthority(user.getGroups().get(0).getRoles().get(0).getRoleName());
+		authorities.add(authority);
 		
 		return new User(user.getEmail(), user.getEncryptedPassword(), user.getEmailVerificationStatus(), true, true, true, authorities);
 	}
@@ -152,8 +158,8 @@ public class UserServiceImpl implements UserService{
 		String token = new MyUtils().generatePasswordResetToken(user.get().getUserId());
 		PasswordResetTokenEntity passwordResetTokenEntity = new PasswordResetTokenEntity();
 		passwordResetTokenEntity.setToken(token);
-		passwordResetTokenEntity.setUserDetails(user.get());
-		passwordResetTokenRepository.save(passwordResetTokenRepository);
+		//passwordResetTokenEntity.setUserDetails(user.get());
+		passwordResetTokenRepository.save(passwordResetTokenEntity);
 		
 		return !returnValue;
 	}

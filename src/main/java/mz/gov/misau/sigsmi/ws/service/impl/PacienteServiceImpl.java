@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 
 import mz.gov.misau.sigsmi.ws.exception.resource.DenidOperationAndInvalidResourceException;
 import mz.gov.misau.sigsmi.ws.exception.resource.PacienteNotFoundException;
-import mz.gov.misau.sigsmi.ws.io.model.EnderecoEntity;
-import mz.gov.misau.sigsmi.ws.io.model.PacienteEntity;
+import mz.gov.misau.sigsmi.ws.io.model.entity.EnderecoEntity;
+import mz.gov.misau.sigsmi.ws.io.model.entity.PacienteEntity;
 import mz.gov.misau.sigsmi.ws.io.repository.PacienteRepository;
 import mz.gov.misau.sigsmi.ws.service.EnderecoService;
 import mz.gov.misau.sigsmi.ws.service.PacienteService;

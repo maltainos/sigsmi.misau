@@ -15,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -35,7 +36,6 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter{
 		this.authenticationManager = authenticationManager;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException {
@@ -43,10 +43,14 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter{
 		try {
 			UserLoginRequestDetails creds = new ObjectMapper()
 					.readValue(request.getInputStream(), UserLoginRequestDetails.class);
+			
+			Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+			SimpleGrantedAuthority authority = new SimpleGrantedAuthority("roles");
+			authorities.add(authority);
+			
 			return authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(
-							creds.getEmail(), creds.getPassword(),
-							(Collection<? extends GrantedAuthority>) new ArrayList<>()));
+							creds.getEmail(), creds.getPassword(), authorities));
 		} catch (IOException e) {
 			throw new RuntimeException();
 		}

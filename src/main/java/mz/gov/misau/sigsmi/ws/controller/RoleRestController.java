@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import mz.gov.misau.sigsmi.ws.exception.resource.RoleNotFoundException;
-import mz.gov.misau.sigsmi.ws.io.model.RoleEntity;
+import mz.gov.misau.sigsmi.ws.io.model.entity.RoleEntity;
 import mz.gov.misau.sigsmi.ws.io.repository.RoleRepository;
 import mz.gov.misau.sigsmi.ws.ui.model.response.RoleRest;
 

@@ -1,11 +1,9 @@
-package mz.gov.misau.sigsmi.ws.io.model;
+package mz.gov.misau.sigsmi.ws.io.model.entity;
 
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,28 +25,57 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 @Entity
-@Table(name = "vacinas")
-public class VacinacaoEntity {
+@Table(name = "gestao_partos")
+public class GestaoDePartoEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	@Column(nullable = false, unique = true, length = 30)
-	private String vacina_Id;
+	private String gestaoPartoId;
 	
-	@Enumerated(EnumType.STRING)
-	private DoseVacina  doseVacina;
+	@Column(nullable = false,  columnDefinition = "Boolean default true")
+	private boolean nadoVivo;
+	
+	@Column(nullable = false,  columnDefinition = "Boolean default false")
+	private boolean partoCesariana;
+	
+	@Column(nullable = false,  columnDefinition = "Boolean default false")
+	private boolean partoComVentose;
+	
+	@Column(nullable = false,  columnDefinition = "Boolean default false")
+	private boolean remocaoManualDaPlaceta;
+	
+	@Column(nullable = false,  columnDefinition = "Boolean default false")
+	private boolean complicacoesHemorragicas;
 	
 	@Column(nullable = false)
-	private LocalDateTime dataVacina;
-	
-	private String localVacina;
+	private LocalDateTime dataParto;
 	
 	@ManyToOne
 	@JoinColumn(name = "gravidez_id")
 	private GravidezEntity gravidez;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

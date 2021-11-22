@@ -1,6 +1,5 @@
-package mz.gov.misau.sigsmi.ws.io.model;
+package mz.gov.misau.sigsmi.ws.io.model.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,30 +8,32 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
+@Data
+@NoArgsConstructor
 @Getter
 @Setter
+@ToString
 @EqualsAndHashCode
 @Entity
-@Table(name = "contactos")
-public class ContactoEntity {
+@Table(name = "historia_gravidez")
+public class HistoriaGravidezEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
-	@Column(nullable = false, length = 30, unique = true)
-	private String contactoId;
-
-	@Column(nullable = false, length = 13, unique = true)
-	private String numeroTelefone;
-
+	
+	private String descricao;
+	
 	@ManyToOne
-	@JoinColumn(name = "paciente_id")
-	private PacienteEntity paciente;
+	@JoinColumn(name = "gravidez_id")
+	private GravidezEntity gravidez;
 }
 
 

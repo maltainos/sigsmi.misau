@@ -1,4 +1,4 @@
-package mz.gov.misau.sigsmi.ws.io.model;
+package mz.gov.misau.sigsmi.ws.io.model.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;

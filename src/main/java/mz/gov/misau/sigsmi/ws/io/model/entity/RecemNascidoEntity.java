@@ -1,4 +1,6 @@
-package mz.gov.misau.sigsmi.ws.io.model;
+package mz.gov.misau.sigsmi.ws.io.model.entity;
+
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,6 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import mz.gov.misau.sigsmi.ws.io.model.enumeration.FortanelaAnterior;
 
 @Data
 @NoArgsConstructor
@@ -62,11 +65,15 @@ public class RecemNascidoEntity {
 	
 	@Column(nullable = false, columnDefinition = "Boolean default false")
 	private boolean temMalFormacao = false;
+	
 	private String malFormacaoNome;
 
+	@Column(name = "data_nascimento", nullable = false)
+	private LocalDateTime dataNascimento;
+	
 	@ManyToOne
-	@JoinColumn(name = "gravidez_id")
-	private GravidezEntity gravidez;
+	@JoinColumn(name = "parto_id")
+	private GestaoDePartoEntity partoId;
 }
 
 

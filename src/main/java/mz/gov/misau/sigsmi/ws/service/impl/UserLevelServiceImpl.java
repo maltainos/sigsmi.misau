@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import mz.gov.misau.sigsmi.ws.exception.resource.UserGroupNotFoundException;
-import mz.gov.misau.sigsmi.ws.io.model.UserLevelEntity;
+import mz.gov.misau.sigsmi.ws.io.model.entity.UserLevelEntity;
 import mz.gov.misau.sigsmi.ws.io.repository.UserLevelRepository;
 import mz.gov.misau.sigsmi.ws.service.UserLevelService;
 import mz.gov.misau.sigsmi.ws.shared.MyUtils;

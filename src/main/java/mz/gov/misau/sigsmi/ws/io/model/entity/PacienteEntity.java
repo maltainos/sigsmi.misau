@@ -1,4 +1,4 @@
-package mz.gov.misau.sigsmi.ws.io.model;
+package mz.gov.misau.sigsmi.ws.io.model.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,6 +19,11 @@ import javax.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import mz.gov.misau.sigsmi.ws.io.model.embeddable.Filiacao;
+import mz.gov.misau.sigsmi.ws.io.model.embeddable.PessoaReferenciaPaciente;
+import mz.gov.misau.sigsmi.ws.io.model.embeddable.ProfissaoPaciente;
+import mz.gov.misau.sigsmi.ws.io.model.enumeration.EstadoCivil;
+import mz.gov.misau.sigsmi.ws.io.model.enumeration.GrupoSanguineo;
 
 
 @EqualsAndHashCode

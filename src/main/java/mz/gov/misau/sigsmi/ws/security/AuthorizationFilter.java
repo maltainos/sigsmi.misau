@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -36,7 +37,6 @@ public class AuthorizationFilter extends BasicAuthenticationFilter{
 		filterChain.doFilter(request, response);
 	}
 
-	@SuppressWarnings("unchecked")
 	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
 		
 		String token = request.getHeader(SecurityConstants.HEADER_STRING);
@@ -47,7 +47,10 @@ public class AuthorizationFilter extends BasicAuthenticationFilter{
 					.setSigningKey(SecurityConstants.getTokenSecret())
 					.parseClaimsJws(token).getBody().getSubject();
 			if(user != null) {
-				return new UsernamePasswordAuthenticationToken(user, null,(Collection<? extends GrantedAuthority>) new ArrayList<>());
+				Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+				SimpleGrantedAuthority authority = new SimpleGrantedAuthority(user);
+				authorities.add(authority);
+				return new UsernamePasswordAuthenticationToken(user, null, authorities);
 			}
 			return null;
 		}

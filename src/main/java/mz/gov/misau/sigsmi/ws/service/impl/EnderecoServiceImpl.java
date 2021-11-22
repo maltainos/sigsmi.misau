@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import mz.gov.misau.sigsmi.ws.exception.resource.EnderecoNotFoundException;
-import mz.gov.misau.sigsmi.ws.io.model.EnderecoEntity;
-import mz.gov.misau.sigsmi.ws.io.model.PacienteEntity;
+import mz.gov.misau.sigsmi.ws.io.model.entity.EnderecoEntity;
+import mz.gov.misau.sigsmi.ws.io.model.entity.PacienteEntity;
 import mz.gov.misau.sigsmi.ws.io.repository.EnderecoRepository;
 import mz.gov.misau.sigsmi.ws.service.EnderecoService;
 import mz.gov.misau.sigsmi.ws.shared.MyUtils;

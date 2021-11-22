@@ -1,4 +1,4 @@
-package mz.gov.misau.sigsmi.ws.io.model;
+package mz.gov.misau.sigsmi.ws.io.model.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,36 +13,29 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-@EqualsAndHashCode
 @Getter
 @Setter
+@EqualsAndHashCode
 @Entity
-@Table(name = "enderecos")
-public class EnderecoEntity {
+@Table(name = "contactos")
+public class ContactoEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@Column(nullable = false, length = 30, unique = true)
-	private String enderecoId;
+	private String contactoId;
 
-	@Column(nullable = false, length = 30)
-	private String residencia;
-
-	@Column(nullable = false, length = 30)
-	private String districto;
-	private String bairro;
-	private String avenida;
-	private String rua;
-	private String nrCasa;
-	private String telefoneCasa;
+	@Column(nullable = false, length = 13, unique = true)
+	private String numeroTelefone;
 
 	@ManyToOne
 	@JoinColumn(name = "paciente_id")
 	private PacienteEntity paciente;
-	
 }
+
+
 
 
 
